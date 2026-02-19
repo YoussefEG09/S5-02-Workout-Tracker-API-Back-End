@@ -1,5 +1,6 @@
 package com.youssef.workout_tracker.controller;
 
+import com.youssef.workout_tracker.exception.ResourceNotFoundException;
 import com.youssef.workout_tracker.model.Routine;
 import com.youssef.workout_tracker.model.User;
 import com.youssef.workout_tracker.repository.UserRepository;
@@ -43,7 +44,7 @@ public class AdminController {
     @Operation(summary = "Eliminar usuario", description = "Elimina un usuario y todas sus rutinas asociadas (solo ADMIN)")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         userRepository.delete(user);
         return ResponseEntity.noContent().build();
