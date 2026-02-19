@@ -1,5 +1,6 @@
 package com.youssef.workout_tracker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -23,5 +24,6 @@ public class Progress {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercise_id", nullable = false)
+    @JsonIgnore
     private Exercise exercise;
 }
