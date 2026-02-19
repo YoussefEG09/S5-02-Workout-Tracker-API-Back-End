@@ -1,5 +1,6 @@
 package com.youssef.workout_tracker.service;
 
+import com.youssef.workout_tracker.exception.ResourceNotFoundException;
 import com.youssef.workout_tracker.model.Exercise;
 import com.youssef.workout_tracker.model.Routine;
 import com.youssef.workout_tracker.model.User;
@@ -28,17 +29,17 @@ public class ExerciseService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
     }
 
     @Transactional
     public Exercise createExercise(Long routineId, String name, int sets, int reps) {
         Routine routine = routineRepository.findById(routineId)
-                .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         User user = getCurrentUser();
         if (!routine.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("No tienes permiso para añadir ejercicios a esta rutina");
+            throw new ResourceNotFoundException("No tienes permiso para añadir ejercicios a esta rutina");
         }
 
         Exercise exercise = Exercise.builder()
@@ -54,11 +55,11 @@ public class ExerciseService {
 
     public List<Exercise> getExercisesByRoutine(Long routineId) {
         Routine routine = routineRepository.findById(routineId)
-                .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         User user = getCurrentUser();
         if (!routine.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("No tienes permiso para ver estos ejercicios");
+            throw new ResourceNotFoundException("No tienes permiso para ver estos ejercicios");
         }
 
         return exerciseRepository.findByRoutineId(routineId);
@@ -67,11 +68,11 @@ public class ExerciseService {
     @Transactional
     public Exercise updateExercise(Long id, String name, int sets, int reps) {
         Exercise exercise = exerciseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
         User user = getCurrentUser();
         if (!exercise.getRoutine().getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("No tienes permiso para editar este ejercicio");
+            throw new ResourceNotFoundException("No tienes permiso para editar este ejercicio");
         }
 
         exercise.setName(name);
@@ -85,11 +86,11 @@ public class ExerciseService {
     @Transactional
     public void deleteExercise(Long id) {
         Exercise exercise = exerciseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
         User user = getCurrentUser();
         if (!exercise.getRoutine().getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("No tienes permiso para eliminar este ejercicio");
+            throw new ResourceNotFoundException("No tienes permiso para eliminar este ejercicio");
         }
 
         exerciseRepository.delete(exercise);

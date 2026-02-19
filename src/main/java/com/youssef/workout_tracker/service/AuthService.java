@@ -2,6 +2,7 @@ package com.youssef.workout_tracker.service;
 
 import com.youssef.workout_tracker.dto.AuthRequest;
 import com.youssef.workout_tracker.dto.AuthResponse;
+import com.youssef.workout_tracker.exception.ResourceNotFoundException;
 import com.youssef.workout_tracker.model.Role;
 import com.youssef.workout_tracker.model.User;
 import com.youssef.workout_tracker.repository.UserRepository;
@@ -25,7 +26,7 @@ public class AuthService {
 
     public AuthResponse register(AuthRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("El usuario ya existe");
+            throw new ResourceNotFoundException("El usuario ya existe");
         }
 
         User user = User.builder()

@@ -1,5 +1,6 @@
 package com.youssef.workout_tracker.service;
 
+import com.youssef.workout_tracker.exception.ResourceNotFoundException;
 import com.youssef.workout_tracker.model.Exercise;
 import com.youssef.workout_tracker.model.Progress;
 import com.youssef.workout_tracker.model.User;
@@ -29,17 +30,17 @@ public class ProgressService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
     }
 
     @Transactional
     public Progress createProgress(Long exerciseId, LocalDate date, String note) {
         Exercise exercise = exerciseRepository.findById(exerciseId)
-                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
         User user = getCurrentUser();
         if (!exercise.getRoutine().getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("No tienes permiso para registrar progreso en este ejercicio");
+            throw new ResourceNotFoundException("No tienes permiso para registrar progreso en este ejercicio");
         }
 
         Progress progress = Progress.builder()
@@ -54,11 +55,11 @@ public class ProgressService {
 
     public List<Progress> getProgressByExercise(Long exerciseId) {
         Exercise exercise = exerciseRepository.findById(exerciseId)
-                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
         User user = getCurrentUser();
         if (!exercise.getRoutine().getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("No tienes permiso para ver este progreso");
+            throw new ResourceNotFoundException("No tienes permiso para ver este progreso");
         }
 
         return progressRepository.findByExerciseIdOrderByDateDesc(exerciseId);
@@ -67,11 +68,11 @@ public class ProgressService {
     @Transactional
     public void deleteProgress(Long id) {
         Progress progress = progressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Progreso no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Progreso no encontrado"));
 
         User user = getCurrentUser();
         if (!progress.getExercise().getRoutine().getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("No tienes permiso para eliminar este progreso");
+            throw new ResourceNotFoundException("No tienes permiso para eliminar este progreso");
         }
 
         progressRepository.delete(progress);

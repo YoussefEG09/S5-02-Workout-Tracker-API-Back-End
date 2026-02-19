@@ -1,5 +1,6 @@
 package com.youssef.workout_tracker.service;
 
+import com.youssef.workout_tracker.exception.ResourceNotFoundException;
 import com.youssef.workout_tracker.model.Routine;
 import com.youssef.workout_tracker.model.User;
 import com.youssef.workout_tracker.repository.RoutineRepository;
@@ -25,7 +26,7 @@ public class RoutineService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
     }
 
     @Transactional
@@ -49,11 +50,11 @@ public class RoutineService {
 
     public Routine getRoutineById(Long id) {
         Routine routine = routineRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         User user = getCurrentUser();
         if (!routine.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("No tienes permiso para ver esta rutina");
+            throw new ResourceNotFoundException("No tienes permiso para ver esta rutina");
         }
 
         return routine;
@@ -61,7 +62,7 @@ public class RoutineService {
 
     @Transactional
     public Routine updateRoutine(Long id, String name, String description) {
-        Routine routine = getRoutineById(id); // ya valida permisos
+        Routine routine = getRoutineById(id);
 
         routine.setName(name);
         routine.setDescription(description);
@@ -72,12 +73,12 @@ public class RoutineService {
 
     @Transactional
     public void deleteRoutine(Long id) {
-        Routine routine = getRoutineById(id); // ya valida permisos
+        Routine routine = getRoutineById(id);
         routineRepository.delete(routine);
         log.info("Rutina {} eliminada", id);
     }
 
-    // Para ADMIN - ver todas las rutinas
+    // Para ADMIN
     public List<Routine> getAllRoutines() {
         return routineRepository.findAll();
     }
