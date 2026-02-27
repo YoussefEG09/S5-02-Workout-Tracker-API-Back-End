@@ -20,6 +20,7 @@ public class DataInitializer implements CommandLineRunner {
         if (!userRepository.existsByUsername("admin")) {
             User admin = User.builder()
                     .username("admin")
+                    .email("admin@workouttracker.com")
                     .password(passwordEncoder.encode("admin123"))
                     .role(Role.ROLE_ADMIN)
                     .build();
