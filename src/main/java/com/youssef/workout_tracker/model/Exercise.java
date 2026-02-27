@@ -23,10 +23,12 @@ public class Exercise {
     private int sets;
     private int reps;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id", nullable = false)
     private Routine routine;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Progress> progressList = new ArrayList<>();
 }

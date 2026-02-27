@@ -38,7 +38,7 @@ public class AuthService {
         userRepository.save(user);
         log.info("Nuevo usuario registrado: {}", request.getUsername());
 
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name(), user.getId());
         return new AuthResponse(token);
     }
 
@@ -63,7 +63,7 @@ public class AuthService {
 
         log.info("Login exitoso: {}", request.getUsername());
 
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name(), user.getId());
         return new AuthResponse(token);
     }
 }
