@@ -49,4 +49,20 @@ public class AdminController {
         userRepository.delete(user);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/routines/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Eliminar rutina", description = "Elimina cualquier rutina del sistema (solo ADMIN)")
+    public ResponseEntity<?> deleteRoutine(@PathVariable Long id) {
+        routineService.deleteRoutineAdmin(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/routines/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Actualizar rutina", description = "Actualiza cualquier rutina del sistema (solo ADMIN)")
+    public ResponseEntity<Routine> updateRoutine(@PathVariable Long id, @RequestBody Routine routine) {
+        Routine updated = routineService.updateRoutineAdmin(id, routine);
+        return ResponseEntity.ok(updated);
+    }
 }

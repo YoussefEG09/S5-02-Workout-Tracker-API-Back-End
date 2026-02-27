@@ -82,4 +82,17 @@ public class RoutineService {
     public List<Routine> getAllRoutines() {
         return routineRepository.findAll();
     }
+    public void deleteRoutineAdmin(Long id) {
+        Routine routine = routineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+        routineRepository.delete(routine);
+    }
+
+    public Routine updateRoutineAdmin(Long id, Routine updatedRoutine) {
+        Routine routine = routineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+        routine.setName(updatedRoutine.getName());
+        routine.setDescription(updatedRoutine.getDescription());
+        return routineRepository.save(routine);
+    }
 }
